@@ -8,17 +8,24 @@ def get_input(data_file: str) -> List[int]:
 
 
 def compute(data: List, sample_size: int = 1) -> int:
-    deeper = 0
+    """
+    Return number of times an observation is bigger than preceding observation.
+    If sample_size > 1 it will compare groups of observations. When comparing
+    groups (abc vs bcd) some observations (bc) will overlap and therefore only the
+    non-overlapping observations (a and d) need to be compared.
+    """
+    bigger = 0
     for depth in range(sample_size, len(data)):
         if data[depth - sample_size] < data[depth]:
-            deeper += 1
-    return deeper
+            bigger += 1
+    return bigger
 
 
-e1 = [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]
-day1 = get_input("inputs/2021_01.txt")
+if __name__ == "__main__":
+    e1 = [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]
+    assert compute(e1) == 7
+    assert compute(e1, sample_size=3) == 5
 
-print("test p1 =", compute(e1))
-print("test p2 =", compute(e1, sample_size=3))
-print("answer p1 =", compute(day1))
-print("answer p2 =", compute(day1, sample_size=3))
+    day1 = get_input("inputs/2021_01.txt")
+    print("answer part 1 =", compute(day1))
+    print("answer part 2 =", compute(day1, sample_size=3))
