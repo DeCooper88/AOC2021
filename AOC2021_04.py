@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Tuple, List, Set
 from collections import Counter
 
 
@@ -7,8 +7,8 @@ def get_input(data_file: str) -> Tuple[List, List]:
     with open(data_file) as f:
         raw = f.read()
         numbers, *grids = raw.split("\n\n")
-        draws = [int(number) for number in numbers.split(',')]
-        players = [player.split('\n') for player in grids]
+        draws = [int(number) for number in numbers.split(",")]
+        players = [player.split("\n") for player in grids]
         clean_players = []
         for player in players:
             clean_rows = []
@@ -19,14 +19,14 @@ def get_input(data_file: str) -> Tuple[List, List]:
         return draws, clean_players
 
 
-class Player:
+class Card:
     def __init__(self, uid, grid):
         self.uid: int = uid
         self.grid: List[List] = grid
-        self.matches: int = 0  # number of times player marks a draw
+        self.matches: int = 0  # number of times the card has a draw
         self.correct_rows = Counter()
         self.correct_cols = Counter()
-        self.marked_sum: int = 0
+        self.marked_sum: int = 0  # sum of all numbers that are marked
 
     def process_draw(self, draw):
         """Process a draw."""
@@ -40,7 +40,7 @@ class Player:
 
     @property
     def bingo(self):
-        """Return True if player has bingo"""
+        """Return True if card has bingo."""
         if self.matches < 5:
             return False
         if self.correct_rows.most_common(1)[0][1] == 5:
@@ -51,46 +51,55 @@ class Player:
 
     @property
     def unmarked_sum(self):
-        """Calculate the sum of all unmarked numbers"""
+        """Calculate the sum of all unmarked numbers left on the card."""
         grid_sum = sum([sum(row) for row in self.grid])
         return grid_sum - self.marked_sum
 
-    def __repr__(self):
-        display = ""
-        for row in self.grid:
-            display += ", ".join([str(n) for n in row]) + "\n"
-        return display
+
+class Game:
+    def __init__(self, draws: List, cards: List):
+        self.draws = draws
+        self.cards = [Card(i, card) for i, card in enumerate(cards)]
+        self.rounds_played = 0
+        self.winners: Set[int] = set()
+
+    def first_winner(self):
+        """
+        Find card that wins first. Return product of sum unmarked fields
+        and last draw. This is solution for part 1.
+        """
+        for draw in self.draws:
+            self.rounds_played += 1
+            for card in self.cards:
+                card.process_draw(draw)
+                if card.bingo:
+                    self.winners.add(card.uid)
+                    return card.unmarked_sum * draw
+        return "No card wins"
+
+    def last_winner(self):
+        """
+        Find card that wins last. Return product of sum unmarked fields
+        and last draw. This is solution for part 2.
+        """
+        for draw in self.draws[self.rounds_played :]:
+            for card in self.cards:
+                card.process_draw(draw)
+                if card.bingo:
+                    last_sum = card.unmarked_sum * draw
+                    self.winners.add(card.uid)
+                    if len(self.winners) == len(self.cards):
+                        return last_sum
+        return "Not everybody wins"
 
 
-def compute_p1(draws, player_grids):
-    players = [Player(i, grid) for i, grid in enumerate(player_grids)]
-    for draw in draws:
-        for player in players:
-            player.process_draw(draw)
-            if player.bingo:
-                return player.unmarked_sum * draw
-    return "No bingo"
-
-
-def compute_p2(draws, player_grids):
-    players = [Player(i, grid) for i, grid in enumerate(player_grids)]
-    winners = set()
-    for draw in draws:
-        for player in players:
-            player.process_draw(draw)
-            if player.bingo:
-                last_sum = player.unmarked_sum * draw
-                winners.add(player.uid)
-                if len(winners) == len(player_grids):
-                    return last_sum
-    return "Not everybody wins"
-
-
-if __name__ == '__main__':
-    e1_draws, e1_players = get_input("examples/e2021_04.txt")
-    assert compute_p1(e1_draws, e1_players) == 4512
-    assert compute_p2(e1_draws, e1_players) == 1924
+if __name__ == "__main__":
+    e1_draws, e1_card = get_input("examples/e2021_04.txt")
+    e1 = Game(e1_draws, e1_card)
+    assert e1.first_winner() == 4512
+    assert e1.last_winner() == 1924
 
     day4_draws, day4_players = get_input("inputs/2021_04.txt")
-    print("part 1 =", compute_p1(day4_draws, day4_players))
-    print("part 2 =", compute_p2(day4_draws, day4_players))
+    day4 = Game(day4_draws, day4_players)
+    print("part 1 =", day4.first_winner())
+    print("part 2 =", day4.last_winner())
