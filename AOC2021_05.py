@@ -1,5 +1,5 @@
 from typing import List, Counter
-from collections import Counter
+import collections
 
 
 def get_input(data_file: str) -> List:
@@ -21,7 +21,7 @@ def compute(data: List, count_diagonals=False) -> int:
     diagonals, which is the answer for part 1. To get the answer for part
     set count_diagonals to True.
     """
-    doubles: Counter = Counter()
+    doubles: Counter = collections.Counter()
     for lines in data:
         left, right = lines
         lc, lr = left
