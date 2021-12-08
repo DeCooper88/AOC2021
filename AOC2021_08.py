@@ -59,12 +59,12 @@ def find_numbers(data: str) -> Dict:
     helper_dict = {v: k for k, v in translator.items()}
     # find top_right, which is diff between charsets 6 and 8
     top_right_set = set(helper_dict[8]) - set(helper_dict[6])
-    top_raw_outputs = top_right_set.pop()
+    top_right = top_right_set.pop()
     # find the two fives that are left after finding 3
     fives_left = [fives[y] for y in range(3) if y != three_index]
     for char_set in fives_left:
-        # if char_set contains top_raw_outputs it must be 2
-        if top_raw_outputs in set(char_set):
+        # if char_set contains top_right it must be 2
+        if top_right in set(char_set):
             translator[char_set] = 2
         # if not then it must be five
         else:
@@ -75,8 +75,8 @@ def find_numbers(data: str) -> Dict:
 
 def translate(signal):
     """
-    Beginnings of a better function to translate the signal
-    patterns into integers.
+    Beginning of a better function to map the signal patterns
+    to integers.
     """
     lengths_dict = {2: 1, 3: 7, 4: 4, 7: 8}
     pattern_to_int = dict()
