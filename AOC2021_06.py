@@ -8,11 +8,13 @@ def get_input(data_file: str) -> List:
         return [int(x.strip()) for x in f.read().split(",")]
 
 
-def compute_p1(data, days):
+def compute_slow(data, days):
+    """
+    Return the number lanternfish there would be after a specified number
+    of days. Uses inefficient algorithm, which makes it too slow for part 2.
+    """
     fish = data.copy()
-    # population = len(fish)
     for day in range(days):
-        # print(day)
         population = len(fish)
         new_born = 0
         for i in range(population):
@@ -23,12 +25,14 @@ def compute_p1(data, days):
                 fish[i] -= 1
         new_fish = [8 for x in range(new_born)]
         fish.extend(new_fish)
-        print(day + 1, len(fish))
-        print(fish[:5])
     return len(fish)
 
 
-def compute_p2(data, days):
+def compute(data, days):
+    """
+    Return the number lanternfish there would be after a specified number
+    of days. Can solve part 1 and 2.
+    """
     fish = data.copy()
     population = len(data)
     birth_registry = Counter()
@@ -52,9 +56,9 @@ def compute_p2(data, days):
 
 if __name__ == "__main__":
     e1 = [3, 4, 3, 1, 2]
-    assert compute_p2(e1, 80) == 5934
-    assert compute_p2(e1, 256) == 26984457539
+    assert compute(e1, 80) == 5934
+    assert compute(e1, 256) == 26984457539
 
     day6 = get_input("inputs/2021_06.txt")
-    print("p1 =", compute_p2(e1, 256))
-    print("p2 =", compute_p2(day6, 256))
+    print("p1 =", compute(e1, 256))
+    print("p2 =", compute(day6, 256))
