@@ -38,7 +38,7 @@ def find_numbers(data: str) -> Dict:
         if not seven.issubset(set(six)):
             translator[six] = 6
             sixes_seen.add(i)
-        # find the 4, which WILL contain all chars of 7
+        # find the 9, which WILL contain all chars of 7
         if four.issubset(set(six)):
             translator[six] = 9
             sixes_seen.add(i)
@@ -73,6 +73,23 @@ def find_numbers(data: str) -> Dict:
     return sorted_translator
 
 
+def translate(signal):
+    """
+    Beginnings of a better function to translate the signal
+    patterns into integers.
+    """
+    lengths_dict = {2: 1, 3: 7, 4: 4, 7: 8}
+    pattern_to_int = dict()
+    for pattern in signal.split():
+        if len(pattern) in lengths_dict:
+            pattern_to_int[pattern] = lengths_dict[len(pattern)]
+    int_to_pattern = {v: k for k, v in pattern_to_int.items()}
+    # top element is char that is in 7, but not in 1.
+    diff_seven_one = set(int_to_pattern[7]) - set(int_to_pattern[1])
+    top = diff_seven_one.pop()
+    return pattern_to_int
+
+
 def compute_p2(data: List) -> int:
     """Answer part 2."""
     total_output = 0
@@ -88,15 +105,14 @@ def compute_p2(data: List) -> int:
 
 
 # t1 = "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab"
-# print(find_numbers(t1))
+# print(translate(t1))
+# print()
 
 e1 = get_input("examples/e2021_08.txt")
-# print(e1)
 assert compute_p1(e1) == 26
 assert compute_p2(e1) == 61229
 
 
 day8 = get_input("inputs/2021_08.txt")
-# print(day8)
 print("day 8 part 1 =", compute_p1(day8))
 print("day 8 part 2 =", compute_p2(day8))
