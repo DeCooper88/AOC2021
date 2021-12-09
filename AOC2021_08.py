@@ -9,7 +9,9 @@ def get_input(data_file: str) -> List:
 
 
 def compute_p1(data: List) -> int:
-    """Answer part 1."""
+    """
+    Return how many times digits 1, 4, 7 or 8 appear. Answer part 1.
+    """
     lengths = {2, 3, 4, 7}
     matches = 0
     for line in data:
@@ -73,25 +75,11 @@ def find_numbers(data: str) -> Dict:
     return sorted_translator
 
 
-def translate(signal):
-    """
-    Beginning of a better function to map the signal patterns
-    to integers.
-    """
-    lengths_dict = {2: 1, 3: 7, 4: 4, 7: 8}
-    pattern_to_int = dict()
-    for pattern in signal.split():
-        if len(pattern) in lengths_dict:
-            pattern_to_int[pattern] = lengths_dict[len(pattern)]
-    int_to_pattern = {v: k for k, v in pattern_to_int.items()}
-    # top element is char that is in 7, but not in 1.
-    diff_seven_one = set(int_to_pattern[7]) - set(int_to_pattern[1])
-    top = diff_seven_one.pop()
-    return pattern_to_int
-
-
 def compute_p2(data: List) -> int:
-    """Answer part 2."""
+    """
+    Translate all signal patterns to integers. Return the sum of all output
+    values. Answer part 2.
+    """
     total_output = 0
     for row in data:
         output = ""
@@ -104,15 +92,11 @@ def compute_p2(data: List) -> int:
     return total_output
 
 
-# t1 = "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab"
-# print(translate(t1))
-# print()
+if __name__ == "__main__":
+    e1 = get_input("examples/e2021_08.txt")
+    assert compute_p1(e1) == 26
+    assert compute_p2(e1) == 61229
 
-e1 = get_input("examples/e2021_08.txt")
-assert compute_p1(e1) == 26
-assert compute_p2(e1) == 61229
-
-
-day8 = get_input("inputs/2021_08.txt")
-print("day 8 part 1 =", compute_p1(day8))
-print("day 8 part 2 =", compute_p2(day8))
+    day8 = get_input("inputs/2021_08.txt")
+    print("day 8 part 1 =", compute_p1(day8))
+    print("day 8 part 2 =", compute_p2(day8))
