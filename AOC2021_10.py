@@ -8,32 +8,40 @@ def get_input(data_file: str) -> List:
         return [x.strip() for x in f.readlines()]
 
 
-def check(chunk: str) -> int:
+def corrupted_check(line: str) -> int:
+    """
+    Return error code if line is corrupted. Otherwise return 0. Lines are
+    corrupted if opening characters are not matched with the right
+    closing character.
+    """
     stack: Deque = deque()
     openers = {"(": ")", "[": "]", "{": "}", "<": ">"}
-    closers = {")": 3, "]": 57, "}": 1197, ">": 25137}
-    for char in chunk:
+    syntax_errors = {")": 3, "]": 57, "}": 1197, ">": 25137}
+    for char in line:
         if char in openers:
             stack.append(char)
         else:
-            left = stack.pop()
-            right = openers[left]
-            if right != char:
-                return closers[char]
+            left_char = stack.pop()
+            right_char = openers[left_char]
+            if right_char != char:
+                return syntax_errors[char]
     return 0
 
 
 def compute_p1(data: List) -> int:
+    """
+    Return 
+    """
     score = 0
-    for chunk in data:
-        score += check(chunk)
+    for line in data:
+        score += corrupted_check(line)
     return score
 
 
-def correct_chunks(data: List) -> List:
+def incomplete_lines(data: List) -> List:
     correct = []
     for chunk in data:
-        if check(chunk) == 0:
+        if corrupted_check(chunk) == 0:
             correct.append(chunk)
     return correct
 
@@ -47,20 +55,18 @@ def complete(chunk: str) -> int:
             stack.append(char)
         else:
             stack.pop()
-    complete_string = ""
+    total_score = 0
     while stack:
-        complete_string += openers[stack.pop()]
-    score = 0
-    for char in complete_string:
-        score *= 5
-        score += scores[char]
-    return score
+        closer = openers[stack.pop()]
+        total_score *= 5
+        total_score += scores[closer]
+    return total_score
 
 
 def compute_p2(data: List) -> int:
-    correct_lines = correct_chunks(data)
+    incomplete = incomplete_lines(data)
     all_scores = []
-    for line in correct_lines:
+    for line in incomplete:
         result = complete(line)
         all_scores.append(result)
     middle = int(len(all_scores) / 2)
