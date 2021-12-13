@@ -73,7 +73,21 @@ class Origami:
                 max_row = row
             if col > max_col:
                 max_col = col
-        return max_row, max_col
+        return max_row + 1, max_col + 1
+
+    def display(self):
+        rows, cols = self.grid_size()
+        row = ['.' for _ in range(cols)]
+        grid = [row.copy() for _ in range(rows)]
+        for dot in self.dots:
+
+            row, col = dot
+            grid[row][col] = '#'
+        display = ""
+        for row in grid:
+            line = "".join(row) + "\n"
+            display += line
+        return display
 
 
 e1 = get_input('examples/e2021_13.txt')
@@ -83,15 +97,19 @@ ex1 = Origami(e1d, e1f)
 # print(ex1)
 # print(ex1.dots)
 # print(ex1.folds)
+
+# ex1.fold_once()
+# print(ex1.grid_size())
 # print()
-ex1.fold_once()
-# print(ex1.dots)
-print('example =', len(ex1.dots))
+ex1.fold_all()
+print(ex1.display())
+# print('example =', len(ex1.dots))
+
 
 d13 = get_input('inputs/2021_13.txt')
 day13_dots, day13_folds = d13
 day13 = Origami(day13_dots, day13_folds)
-# print(day13.dots)
-# print(day13.folds)
-day13.fold_once()
-print('part 1 =', len(day13.dots))
+# day13.fold_once()
+# print('part 1 =', len(day13.dots))
+day13.fold_all()
+print(day13.display())
