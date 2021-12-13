@@ -78,7 +78,7 @@ class Origami:
     def display(self) -> str:
         """Return visualization of Origami."""
         rows, cols = self.grid_size
-        row = ["." for _ in range(cols)]
+        row = [" " for _ in range(cols)]
         grid = [row.copy() for _ in range(rows)]
         for dot in self.dots:
             row, col = dot
